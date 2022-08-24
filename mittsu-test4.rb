@@ -57,7 +57,6 @@ scene.add(bullets)
 
 scene.add(bullets2)
 
-#
 renderer.window.on_key_pressed do |glfw_key|
   # 押下されたキーがスペースキーであれば、新規の弾丸メッシュを生成してシーンと配列に
   # 格納する
@@ -83,7 +82,7 @@ renderer.window.on_key_pressed do |glfw_key|
     sphere.position.y -= 2
   end
 
-  if glfw_key == GLFW_KEY_ENTER
+  if glfw_key == GLFW_KEY_X
     geometry = Mittsu::SphereGeometry.new(0.5, 8, 8)
     material = Mittsu::MeshBasicMaterial.new(color: 0xff0000)
     bullet2 = Mittsu::Mesh.new(geometry, material)
@@ -112,24 +111,66 @@ renderer.window.run do
 
   bullets.children.each do |bullet|
     bullet.position.x -= 0.1
-    puts bullet.position.x 
+    #puts bullet.position.x 
     if bullet.position.x < -20
       bullets.remove(bullet)
     end
+    # 2つの球の間の距離を計算
+    distance = bullet.position.distance_to(box.position)
+    distance2 = bullet.position.distance_to(box2.position)
+    distance5 = bullet.position.distance_to(sphere2.position)
+    # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
+    if distance <= 1.5
+      # シーンから大きい方の球を除去
+      #scene.remove(bullet)
+      bullets.remove(bullet)
+    end
+    if distance2 <= 1.5
+      # シーンから大きい方の球を除去
+      #scene.remove(bullet)
+      bullets.remove(bullet)
+    end
+    if distance5 <= 1.5
+      # シーンから大きい方の球を除去
+      scene.remove(sphere2)
+    end
+    bullets2.children.each do |bullet2| 
+      distance7 = bullet.position.distance_to(bullet2.position)
+      if distance7 <= 1.5
+        #シーンから大きい方の球を除去
+        bullets.remove(bullet)
+        bullets2.remove(bullet2)
+      end
+    end
+
   end
   
   bullets2.children.each do |bullet2|
     bullet2.position.x += 0.1
-    puts bullet2.position.x 
+    #puts bullet2.position.x 
     if bullet2.position.x > 22
       bullets2.remove(bullet2)
     end
+    # 2つの球の間の距離を計算
+    distance3 = bullet2.position.distance_to(box.position)
+    distance4 = bullet2.position.distance_to(box2.position)
+    distance6 = bullet2.position.distance_to(sphere.position)
+    # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
+    if distance3 <= 1.5
+      # シーンから大きい方の球を除去
+      #scene.remove(bullet)
+      bullets2.remove(bullet2)
+    end
+    if distance4 <= 1.5
+      # シーンから大きい方の球を除去
+      #scene.remove(bullet)
+      bullets2.remove(bullet2)
+    end
+    if distance6 <= 1.5
+      # シーンから大きい方の球を除去
+      scene.remove(sphere)
+    end
   end
-
 
   renderer.render(scene, camera)
 end
-
-obata
-
-
