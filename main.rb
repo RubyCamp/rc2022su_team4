@@ -1,4 +1,6 @@
 require 'mittsu'
+# 依存するファイル群を一括でrequireする
+Dir.glob("lib/*.rb") {|path| require_relative path }
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
@@ -12,16 +14,9 @@ scene = Mittsu::Scene.new
 camera = Mittsu::PerspectiveCamera.new(75.0, ASPECT, 0.1, 1000.0)
 camera.position.z = 25
 
-count = 0
-
-box = Mittsu::Mesh.new(
-  Mittsu::BoxGeometry.new(3.0, 3.0, 3.0),
-  Mittsu::MeshBasicMaterial.new(color: 0x00ff00)
-)
-box2 = Mittsu::Mesh.new(
-  Mittsu::BoxGeometry.new(3.0, 3.0, 3.0),
-  Mittsu::MeshBasicMaterial.new(color: 0x0ff000)
-)
+obstacle = Obstacle.new(color: 0x00ff00)
+obstacle2 = Obstacle.new(color: 0x00ff00, offset: 5)
+obstacle3 = Obstacle.new(color: 0x00ff00, offset: -6, phase: Math::PI)
 
 sphere = Mittsu::Mesh.new(
   Mittsu::SphereGeometry.new(1, 160, 160),
@@ -41,13 +36,15 @@ sphere.position.x = 20.0
 
 sphere2.position.x = -20.0
 
-box2.position.x = 4
+obstacle2.mesh.position.x = 4
 
-box2.position.y = 2
+obstacle3.mesh.position.x = -6
 
-scene.add(box)
+scene.add(obstacle.mesh)
 
-scene.add(box2)
+scene.add(obstacle2.mesh)
+
+scene.add(obstacle3.mesh)
 
 scene.add(sphere)
 
@@ -104,10 +101,9 @@ renderer.window.on_key_pressed do |glfw_key|
 end
 
 renderer.window.run do
-  box.position.y = Math.sin(count*0.05)*8
-  box2.position.y = Math.sin(count*0.05)*8+5
-  #1フレームごとに1カウントが上がる
-  count +=1
+  obstacle.play
+  obstacle2.play
+  obstacle3.play
 
   bullets.children.each do |bullet|
     bullet.position.x -= 0.1
@@ -116,9 +112,10 @@ renderer.window.run do
       bullets.remove(bullet)
     end
     # 2つの球の間の距離を計算
-    distance = bullet.position.distance_to(box.position)
-    distance2 = bullet.position.distance_to(box2.position)
+    distance = bullet.position.distance_to(obstacle.mesh.position)
+    distance2 = bullet.position.distance_to(obstacle2.mesh.position)
     distance5 = bullet.position.distance_to(sphere2.position)
+    distance8 = bullet.position.distance_to(obstacle3.mesh.position)
     # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
     if distance <= 1.5
       # シーンから大きい方の球を除去
@@ -128,6 +125,10 @@ renderer.window.run do
     if distance2 <= 1.5
       # シーンから大きい方の球を除去
       #scene.remove(bullet)
+      bullets.remove(bullet)
+    end
+    if distance8 <= 1.5
+      # シーンから大きい方の球を除去
       bullets.remove(bullet)
     end
     if distance5 <= 1.5
@@ -152,9 +153,10 @@ renderer.window.run do
       bullets2.remove(bullet2)
     end
     # 2つの球の間の距離を計算
-    distance3 = bullet2.position.distance_to(box.position)
-    distance4 = bullet2.position.distance_to(box2.position)
+    distance3 = bullet2.position.distance_to(obstacle.mesh.position)
+    distance4 = bullet2.position.distance_to(obstacle2.mesh.position)
     distance6 = bullet2.position.distance_to(sphere.position)
+    distance9 = bullet2.position.distance_to(obstacle3.mesh.position)
     # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
     if distance3 <= 1.5
       # シーンから大きい方の球を除去
@@ -162,6 +164,11 @@ renderer.window.run do
       bullets2.remove(bullet2)
     end
     if distance4 <= 1.5
+      # シーンから大きい方の球を除去
+      #scene.remove(bullet)
+      bullets2.remove(bullet2)
+    end
+    if distance9 <= 1.5
       # シーンから大きい方の球を除去
       #scene.remove(bullet)
       bullets2.remove(bullet2)
