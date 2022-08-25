@@ -14,7 +14,7 @@ renderer = Mittsu::OpenGLRenderer.new width: SCREEN_WIDTH, height: SCREEN_HEIGHT
 aspect_ratio = SCREEN_WIDTH.to_f / SCREEN_HEIGHT.to_f
 
 # 起動直後に実行するディレクター（タイトル画面用）オブジェクト生成
-current_director = Directors::Game.new(renderer: renderer, aspect: aspect_ratio)
+current_director = Directors::Title.new(renderer: renderer, aspect: aspect_ratio)
 
 
 renderer.window.run do
