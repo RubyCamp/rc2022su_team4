@@ -16,7 +16,10 @@ module Directors
 
 			@pause_board = TextBoard.new(texture_path: "textures/title_vs_com.png", value:0,z:20)
 
+            @timeover_board = TextBoard.new(texture_path: "textures/title_vs_player.png", value:0,z:20)
             add_lights 
+
+
 
             @sphere = Player.new(color: 0x0000ff)
             @sphere2 = Player.new(color: 0x0000ff)
@@ -109,6 +112,11 @@ module Directors
         end
 
         def play
+            @start_time ||= Time.now
+            now = Time.now
+            if now - @start_time > 60
+                self.scene.add(@timeover_board.mesh) 
+            end
             if !@paused
                 @obstacle.play
                 @obstacle2.play
