@@ -11,6 +11,7 @@ module Directors
             @obstacle = Obstacle.new(color: 0x00ff00)
             @obstacle2 = Obstacle.new(color: 0x00ff00, offset: 5)
             @obstacle3 = Obstacle.new(color: 0x00ff00, offset: -6, phase: Math::PI)
+            @obstacle4 = Obstacle.new(color: 0x00ff00, offset: -4, phase: Math::PI)
 
             @sphere = Player.new(color: 0x0000ff)
             @sphere2 = Player.new(color: 0x0000ff)
@@ -27,11 +28,15 @@ module Directors
 
             @obstacle3.mesh.position.x = -6
 
+            @obstacle4.mesh.position.x = 8
+
             self.scene.add(@obstacle.mesh)
 
             self.scene.add(@obstacle2.mesh)
 
             self.scene.add(@obstacle3.mesh)
+
+            self.scene.add(@obstacle4.mesh)
 
             self.scene.add(@sphere.mesh)
 
@@ -89,9 +94,10 @@ module Directors
         end
 
         def play
-            @obstacle.play
+            # @obstacle.play
             @obstacle2.play
             @obstacle3.play
+            @obstacle4.play
 
             @bullets.children.each do |bullet|
                 bullet.position.x -= 0.1
@@ -104,19 +110,40 @@ module Directors
                 distance2 = bullet.position.distance_to(@obstacle2.mesh.position)
                 distance5 = bullet.position.distance_to(@sphere2.mesh.position)
                 distance8 = bullet.position.distance_to(@obstacle3.mesh.position)
+                distance10 = bullet.position.distance_to(@obstacle4.mesh.position)
                 # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
-                if distance <= 1.5
+                if distance <= 1.5 && !@obstacle.destroyed?
                 # シーンから大きい方の球を除去
                 #scene.remove(bullet)
+                    @obstacle.hit
+                    if @obstacle.destroyed?
+                        self.scene.remove(@obstacle.mesh)
+                    end
                     @bullets.remove(bullet)
                 end
-                if distance2 <= 1.5
+                if distance2 <= 1.5 && !@obstacle2.destroyed?
                 # シーンから大きい方の球を除去
                 #scene.remove(bullet)
+                @obstacle2.hit
+                if @obstacle2.destroyed?
+                    self.scene.remove(@obstacle2.mesh)
+                end
                     @bullets.remove(bullet)
                 end
-                if distance8 <= 1.5
+                if distance8 <= 1.5  && !@obstacle3.destroyed?
                 # シーンから大きい方の球を除去
+                @obstacle3.hit
+                if @obstacle3.destroyed?
+                    self.scene.remove(@obstacle3.mesh)
+                end
+                    @bullets.remove(bullet)
+                end
+                if distance10 <= 1.5 && !@obstacle4.destroyed?
+                    # シーンから大きい方の球を除去
+                    @obstacle4.hit
+                    if @obstacle4.destroyed?
+                        self.scene.remove(@obstacle4.mesh)
+                    end
                     @bullets.remove(bullet)
                 end
                 if distance5 <= 1.5
@@ -144,20 +171,42 @@ module Directors
                 distance4 = bullet2.position.distance_to(@obstacle2.mesh.position)
                 distance6 = bullet2.position.distance_to(@sphere.mesh.position)
                 distance9 = bullet2.position.distance_to(@obstacle3.mesh.position)
+                distance11 = bullet2.position.distance_to(@obstacle4.mesh.position)
                 # 得られた距離が、互いの半径の合計値（1.0 + 0.5）以下になったら触れたと判定する
-                if distance3 <= 1.5
+                if distance3 <= 1.5 && !@obstacle.destroyed?
                 # シーンから大きい方の球を除去
                 #scene.remove(bullet)
+                @obstacle.hit
+                if @obstacle.destroyed?
+                    self.scene.remove(@obstacle.mesh)
+                end
                     @bullets2.remove(bullet2)
                 end
-                if distance4 <= 1.5
+                if distance4 <= 1.5 && !@obstacle2.destroyed?
                 # シーンから大きい方の球を除去
                 #scene.remove(bullet)
+                @obstacle2.hit
+                if @obstacle2.destroyed?
+                    self.scene.remove(@obstacle2.mesh)
+                end
                     @bullets2.remove(bullet2)
                 end
-                if distance9 <= 1.5
+                if distance9 <= 1.5 && !@obstacle3.destroyed?
                 # シーンから大きい方の球を除去
                 #scene.remove(bullet)
+                @obstacle3.hit
+                if @obstacle3.destroyed?
+                    self.scene.remove(@obstacle3.mesh)
+                end
+                    @bullets2.remove(bullet2)
+                end
+                if distance11 <= 1.5 && !@obstacle4.destroyed?
+                    # シーンから大きい方の球を除去
+                    #scene.remove(bullet)
+                    @obstacle4.hit
+                    if @obstacle4.destroyed?
+                        self.scene.remove(@obstacle4.mesh)
+                    end
                     @bullets2.remove(bullet2)
                 end
                 if distance6 <= 1.5
